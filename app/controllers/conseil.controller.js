@@ -1,4 +1,4 @@
-const Review = require("../models/review.model.js");
+const Conseil = require("../models/conseil.model.js");
 
 
 exports.create = (req, res) => {
@@ -38,17 +38,18 @@ exports.create = (req, res) => {
     }
   
     // Create a Customer
-    const review = new Review({
+    const conseil = new Conseil({
+      idLieu: req.body.idLieu,
       idMembre: req.body.idMembre,
       contenu: req.body.contenu,
-      idLieu: req.body.idLieu,
-      idCircuit: req.body.idCircuit,
+      nbLike: req.body.nbLike,
+      nbDislike: req.body.nbDislike,
       
 
     });
   
  
-    Review.create(review, (err, data) => {
+    Conseil.create(conseil, (err, data) => {
       if (err)
         res.status(500).send({
           message:
@@ -58,7 +59,7 @@ exports.create = (req, res) => {
     });
   };
   exports.findAll = (req, res) => {
-    Review.getAll((err, data) => {
+    Conseil.getAll((err, data) => {
       if (err)
         res.status(500).send({
           message:
@@ -68,15 +69,15 @@ exports.create = (req, res) => {
     });
   };
   exports.findOne = (req, res) => {
-    Review.findById(req.params.reviewId, (err, data) => {
+    Conseil.findById(req.params.conseilId, (err, data) => {
       if (err) {
         if (err.kind === "not_found") {
           res.status(404).send({
-            message: `Not found membre with id ${req.params.reviewId}.`
+            message: `Not found membre with id ${req.params.conseilId}.`
           });
         } else {
           res.status(500).send({
-            message: "Error retrieving mmebre with idmembre " + req.params.reviewId
+            message: "Error retrieving mmebre with idmembre " + req.params.conseilId
           });
         }
       } else res.send(data);
@@ -90,18 +91,18 @@ exports.create = (req, res) => {
       });
     }
   
-    Review.updateById(
-      req.params.reviewId,
-      new Review(req.body),
+    Conseil.updateById(
+      req.params.conseilId,
+      new Conseil(req.body),
       (err, data) => {
         if (err) {
           if (err.kind === "not_found") {
             res.status(404).send({
-              message: `Not found membre with id ${req.params.reviewId}.`
+              message: `Not found membre with id ${req.params.conseilId}.`
             });
           } else {
             res.status(500).send({
-              message: "Error updating membre with id " + req.params.reviewId
+              message: "Error updating membre with id " + req.params.conseilId
             });
           }
         } else res.send(data);
@@ -109,22 +110,22 @@ exports.create = (req, res) => {
     );
   };
   exports.delete = (req, res) => {
-    Review.remove(req.params.reviewId, (err, data) => {
+    Conseil.remove(req.params.conseilId, (err, data) => {
       if (err) {
         if (err.kind === "not_found") {
           res.status(404).send({
-            message: `Not found Customer with id ${req.params.reviewId}.`
+            message: `Not found Customer with id ${req.params.conseilId}.`
           });
         } else {
           res.status(500).send({
-            message: "Could not delete Customer with id " + req.params.reviewId
+            message: "Could not delete Customer with id " + req.params.conseilId
           });
         }
       } else res.send({ message: `membre was deleted successfully!` });
     });
   };
   exports.deleteAll = (req, res) => {
-    Review.removeAll((err, data) => {
+    Conseil.removeAll((err, data) => {
       if (err)
         res.status(500).send({
           message:

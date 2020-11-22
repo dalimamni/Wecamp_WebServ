@@ -382,6 +382,7 @@ require("./app/routes/membre.routes.js")(app);
 require("./app/routes/profil.routes.js")(app);
 require("./app/routes/review.routes.js")(app);
 require("./app/routes/rating.routes.js")(app);
+require("./app/routes/conseil.routes.js")(app);
 // set port, listen for requests
 app.listen(3305, () => {
   console.log("Server is running on port 3305.");
