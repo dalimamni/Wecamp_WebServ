@@ -1,0 +1,17 @@
+module.exports = app => {
+    const circuitPoint = require("../controllers/circuitPoint.controller.js");
+  
+    
+    app.post("/circuitPoint", circuitPoint.create);
+  
+    app.get("/circuitPoint", circuitPoint.findAll);
+  
+    app.get("/circuitPoint/:circuitPointId", circuitPoint.findOne);
+    
+    app.put("/circuitPoint/:circuitPointId", circuitPoint.update);
+
+    app.delete("/circuitPoint/:circuitPointId", circuitPoint.delete);
+
+    app.delete("/circuitPoint", circuitPoint.deleteAll);
+    
+  };
