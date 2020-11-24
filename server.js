@@ -371,7 +371,7 @@ const complaint_upload = multer.diskStorage({
 
 
 
-require("./app/routes/customer.routes.js")(app);
+require("./app/routes/lieu.routes.js")(app);
 require("./app/routes/groupe.routes.js")(app);
 require("./app/routes/circuit.routes.js")(app);
 require("./app/routes/image.routes.js")(app);

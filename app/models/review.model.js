@@ -41,6 +41,96 @@ Review.findById = (reviewId, result) => {
   });
 };
 
+Review.findByIdMembre = (membreId, result) => {
+  sql.query(`SELECT * FROM review WHERE idMembre = ${membreId}`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+
+    if (res.length) {
+      console.log("found Review: ", res[0]);
+      result(null, res[0]);
+      return;
+    }
+
+    result({ kind: "not_found" }, null);
+  });
+};
+
+Review.findByIdLieu = (lieuId, result) => {
+  sql.query(`SELECT * FROM review WHERE idLieu = ${lieuId}`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+
+    if (res.length) {
+      console.log("found Review: ", res[0]);
+      result(null, res[0]);
+      return;
+    }
+    
+    result({ kind: "not_found" }, null);
+  });
+};
+
+Review.findByIdCircuit = (circuitId, result) => {
+  sql.query(`SELECT * FROM review WHERE idCircuit = ${circuitId}`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+
+    if (res.length) {
+      console.log("found Review: ", res[0]);
+      result(null, res[0]);
+      return;
+    }
+    
+    result({ kind: "not_found" }, null);
+  });
+};
+
+Review.findByIdMembreAndIdLieu = (membreId, lieuId, result) => {
+  sql.query(`SELECT * FROM review WHERE idMembre = ${membreId} AND idLieu = ${lieuId}`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+
+    if (res.length) {
+      console.log("found Review: ", res[0]);
+      result(null, res[0]);
+      return;
+    }
+
+    result({ kind: "not_found" }, null);
+  });
+};
+
+Review.findByIdMembreAndIdCircuit = (membreId, circuitId, result) => {
+  sql.query(`SELECT * FROM review WHERE idMembre = ${membreId} AND idCircuit = ${circuitId}`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+
+    if (res.length) {
+      console.log("found Review: ", res[0]);
+      result(null, res[0]);
+      return;
+    }
+
+    result({ kind: "not_found" }, null);
+  });
+};
+
 Review.getAll = result => {
   sql.query("SELECT * FROM review", (err, res) => {
     if (err) {

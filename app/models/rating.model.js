@@ -40,7 +40,133 @@ Rating.findById = (ratingId, result) => {
     result({ kind: "not_found" }, null);
   });
 };
+//find by member ID 
+Rating.findByIdMembre = (membreId, result) => {
+  sql.query(`SELECT * FROM rating WHERE idMembre = ${membreId}`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
 
+    if (res.length) {
+      console.log("found Rating: ", res[0]);
+      result(null, res[0]);
+      return;
+    }
+
+    result({ kind: "not_found" }, null);
+  });
+};
+// find by member id and lieu id
+Rating.findByIdMembreAndIdLieu = (membreId, lieuId, result) => {
+  sql.query(`SELECT * FROM rating WHERE idMembre = ${membreId} AND idLieu = ${lieuId}`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+
+    if (res.length) {
+      console.log("found Rating: ", res[0]);
+      result(null, res[0]);
+      return;
+    }
+
+    result({ kind: "not_found" }, null);
+  });
+};
+
+Rating.findByIdMembreAndIdCircuit = (membreId, circuitId, result) => {
+  sql.query(`SELECT * FROM rating WHERE idMembre = ${membreId} AND idCiruict = ${circuitId}`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+
+    if (res.length) {
+      console.log("found Rating: ", res[0]);
+      result(null, res[0]);
+      return;
+    }
+
+    result({ kind: "not_found" }, null);
+  });
+};
+// find By lieuId
+Rating.findByIdLieu = (lieuId, result) => {
+  sql.query(`SELECT * FROM rating WHERE idLieu = ${lieuId}`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+
+    if (res.length) {
+      console.log("found Rating: ", res[0]);
+      result(null, res[0]);
+      return;
+    }
+
+    result({ kind: "not_found" }, null);
+  });
+};
+// find By circuitId
+Rating.findByIdCircuit = (circuitId, result) => {
+  sql.query(`SELECT * FROM rating WHERE idCircuit = ${circuitId}`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+
+    if (res.length) {
+      console.log("found Rating: ", res[0]);
+      result(null, res[0]);
+      return;
+    }
+
+    result({ kind: "not_found" }, null);
+  });
+};
+//moy des rating d'un lieu
+Rating.moyRatingLieu = (lieuId, result) => {
+  sql.query(`SELECT SUM(nbEtoile) FROM rating WHERE idLieu = ${lieuId}`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+
+    if (res.length) {
+      console.log("found Rating: ", res[0]);
+      result(null, res[0]/res.length);
+      return;
+    }
+
+    result({ kind: "not_found" }, null);
+  });
+};
+
+//moy des rating d'un circuit
+Rating.moyRatingCircuit = (ciruictId, result) => {
+  sql.query(`SELECT SUM(nbEtoile) FROM rating WHERE idCiruict = ${lieuId}`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+
+    if (res.length) {
+      console.log("found Rating: ", res[0]);
+      result(null, res[0]/res.length);
+      return;
+    }
+
+    result({ kind: "not_found" }, null);
+  });
+};
 Rating.getAll = result => {
   sql.query("SELECT * FROM rating", (err, res) => {
     if (err) {

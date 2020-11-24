@@ -3,34 +3,6 @@ const Review = require("../models/review.model.js");
 
 exports.create = (req, res) => {
   
-};
-
-
-exports.findAll = (req, res) => {
-  
-};
-
-
-exports.findOne = (req, res) => {
-  
-};
-
-exports.update = (req, res) => {
-  
-};
-
-
-exports.delete = (req, res) => {
-  
-};
-
-
-exports.deleteAll = (req, res) => {
-  
-};
-
-exports.create = (req, res) => {
-  
     if (!req.body) {
       res.status(400).send({
         message: "Content can not be empty!"
@@ -57,7 +29,8 @@ exports.create = (req, res) => {
       else res.send(data);
     });
   };
-  exports.findAll = (req, res) => {
+
+exports.findAll = (req, res) => {
     Review.getAll((err, data) => {
       if (err)
         res.status(500).send({
@@ -67,7 +40,8 @@ exports.create = (req, res) => {
       else res.send(data);
     });
   };
-  exports.findOne = (req, res) => {
+
+exports.findOne = (req, res) => {
     Review.findById(req.params.reviewId, (err, data) => {
       if (err) {
         if (err.kind === "not_found") {
@@ -82,7 +56,91 @@ exports.create = (req, res) => {
       } else res.send(data);
     });
   };
-  exports.update = (req, res) => {
+
+exports.findByIdMembre = (req, res) => {
+    Review.findByIdMembre(req.params.membreId, (err, data) => {
+      if (err) {
+        if (err.kind === "not_found") {
+          res.status(404).send({
+            message: `Not found review with idMembre ${req.params.membreId}.`
+          });
+        } else {
+          res.status(500).send({
+            message: "Error retrieving review with idMembre " + req.params.membreId
+          });
+        }
+      } else res.send(data);
+    });
+  };
+
+
+exports.findByIdLieu = (req, res) => {
+    Review.findByIdLieu(req.params.lieuId, (err, data) => {
+      if (err) {
+        if (err.kind === "not_found") {
+          res.status(404).send({
+            message: `Not found review with idLieu ${req.params.lieuId}.`
+          });
+        } else {
+          res.status(500).send({
+            message: "Error retrieving review with idLieu " + req.params.lieuId
+          });
+        }
+      } else res.send(data);
+    });
+  };
+
+  
+
+exports.findByIdCircuit = (req, res) => {
+    Review.findByIdCircuit(req.params.circuitId, (err, data) => {
+      if (err) {
+        if (err.kind === "not_found") {
+          res.status(404).send({
+            message: `Not found review with idLieu ${req.params.circuitId}.`
+          });
+        } else {
+          res.status(500).send({
+            message: "Error retrieving review with idLieu " + req.params.circuitId
+          });
+        }
+      } else res.send(data);
+    });
+  };
+
+exports.findByIdMembreAndIdLieu = (req, res) => {
+    Review.findByIdMembreAndIdLieu(req.params.membreId, req.params.lieuId, (err, data) => {
+      if (err) {
+        if (err.kind === "not_found") {
+          res.status(404).send({
+            message: `Not found review with idLieu ${req.params.lieuId} And idMembre ${req.params.membreId}.`
+          });
+        } else {
+          res.status(500).send({
+            message: "Error retrieving review with idLieu " + req.params.circuitId + "And idMembre" req.params.membreId
+          });
+        }
+      } else res.send(data);
+    });
+  };
+
+exports.findByIdMembreAndIdCircuit = (req, res) => {
+    Review.findByIdMembreAndIdCircuit(req.params.membreId, req.params.circuitId, (err, data) => {
+      if (err) {
+        if (err.kind === "not_found") {
+          res.status(404).send({
+            message: `Not found review with idCircuit ${req.params.circuitId} And idMembre ${req.params.membreId}.`
+          });
+        } else {
+          res.status(500).send({
+            message: "Error retrieving review with idCircuit " + req.params.circuitId + "And idMembre" req.params.membreId
+          });
+        }
+      } else res.send(data);
+    });
+  };
+
+exports.update = (req, res) => {
     // Validate Request
     if (!req.body) {
       res.status(400).send({
@@ -123,7 +181,8 @@ exports.create = (req, res) => {
       } else res.send({ message: `membre was deleted successfully!` });
     });
   };
-  exports.deleteAll = (req, res) => {
+
+exports.deleteAll = (req, res) => {
     Review.removeAll((err, data) => {
       if (err)
         res.status(500).send({

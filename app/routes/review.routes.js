@@ -9,6 +9,17 @@ module.exports = app => {
   
     // Retrieve a single Customer with customerId
     app.get("/review/:reviewId", review.findOne);
+
+    app.get("/membre_reviews/:membreId", review.findByIdMembre);
+
+    app.get("/lieu_reviews/:lieuId", review.findByIdLieu);
+
+    app.get("/circuit_reviews/:circuitId", review.findByIdCircuit);
+
+    app.get("/membre_lieu_reviews/:lieuId/:membreId", review.findByIdMembreAndIdLieu);
+
+    app.get("/membre_lieu_reviews/:circuitId/:membreId", review.findByIdMembreAndIdCircuit);
+    
     // Update a Customer with customerId
     app.put("/review/:reviewId", review.update);
 

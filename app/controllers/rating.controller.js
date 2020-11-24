@@ -3,34 +3,6 @@ const Rating = require("../models/rating.model.js");
 
 exports.create = (req, res) => {
   
-};
-
-
-exports.findAll = (req, res) => {
-  
-};
-
-
-exports.findOne = (req, res) => {
-  
-};
-
-exports.update = (req, res) => {
-  
-};
-
-
-exports.delete = (req, res) => {
-  
-};
-
-
-exports.deleteAll = (req, res) => {
-  
-};
-
-exports.create = (req, res) => {
-  
     if (!req.body) {
       res.status(400).send({
         message: "Content can not be empty!"
@@ -77,6 +49,118 @@ exports.create = (req, res) => {
         } else {
           res.status(500).send({
             message: "Error retrieving mmebre with idrating " + req.params.ratingId
+          });
+        }
+      } else res.send(data);
+    });
+  };
+
+  exports.findByIdMembre = (req, res) => {
+    Rating.findByIdMembre(req.params.membreId, (err, data) => {
+      if (err) {
+        if (err.kind === "not_found") {
+          res.status(404).send({
+            message: `Not found rating with id ${req.params.membreId}.`
+          });
+        } else {
+          res.status(500).send({
+            message: "Error retrieving mmebre with idrating " + req.params.membreId
+          });
+        }
+      } else res.send(data);
+    });
+  };
+
+exports.findByIdMembreAndIdLieu = (req, res) => {
+    Rating.findByIdMembreAndIdLieu(req.params.membreId, req.params.lieuId, (err, data) => {
+      if (err) {
+        if (err.kind === "not_found") {
+          res.status(404).send({
+            message: `Not found rating with idMembre ${req.params.membreId} And idLieu ${req.params.lieuId}.`
+          });
+        } else {
+          res.status(500).send({
+            message: "Error retrieving mmebre with idMembre " + req.params.membreId + " and idLieu " + req.params.lieuId
+          });
+        }
+      } else res.send(data);
+    });
+  };
+
+exports.findByIdMembreAndIdCircuit = (req, res) => {
+    Rating.findByIdMembreAndIdCircuit(req.params.membreId, req.params.circuitId, (err, data) => {
+      if (err) {
+        if (err.kind === "not_found") {
+          res.status(404).send({
+            message: `Not found rating with idMembre ${req.params.membreId} And idLieu ${req.params.circuitId}.`
+          });
+        } else {
+          res.status(500).send({
+            message: "Error retrieving mmebre with idMembre " + req.params.membreId + " and idLieu " + req.params.circuitId
+          });
+        }
+      } else res.send(data);
+    });
+  };
+
+exports.findByIdLieu = (req, res) => {
+    Rating.findByIdLieu(req.params.lieuId, (err, data) => {
+      if (err) {
+        if (err.kind === "not_found") {
+          res.status(404).send({
+            message: `Not found rating with id ${req.params.lieuId}.`
+          });
+        } else {
+          res.status(500).send({
+            message: "Error retrieving mmebre with idrating " + req.params.lieuId
+          });
+        }
+      } else res.send(data);
+    });
+  };
+
+
+exports.findByIdCircuit = (req, res) => {
+    Rating.findByIdCircuit(req.params.circuitId, (err, data) => {
+      if (err) {
+        if (err.kind === "not_found") {
+          res.status(404).send({
+            message: `Not found rating with id ${req.params.circuitId}.`
+          });
+        } else {
+          res.status(500).send({
+            message: "Error retrieving mmebre with idrating " + req.params.circuitId
+          });
+        }
+      } else res.send(data);
+    });
+  };
+
+exports.moyRatingLieu = (req, res) => {
+    Rating.moyRatingLieu(req.params.lieuId, (err, data) => {
+      if (err) {
+        if (err.kind === "not_found") {
+          res.status(404).send({
+            message: `Not found rating with id ${req.params.lieuId}.`
+          });
+        } else {
+          res.status(500).send({
+            message: "Error retrieving mmebre with idrating " + req.params.lieuId
+          });
+        }
+      } else res.send(data);
+    });
+  };
+  exports.moyRatingCircuit = (req, res) => {
+    Rating.moyRatingCircuit(req.params.circuitId, (err, data) => {
+      if (err) {
+        if (err.kind === "not_found") {
+          res.status(404).send({
+            message: `Not found rating with id ${req.params.circuitId}.`
+          });
+        } else {
+          res.status(500).send({
+            message: "Error retrieving mmebre with idrating " + req.params.circuitId
           });
         }
       } else res.send(data);
