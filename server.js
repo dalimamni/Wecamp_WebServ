@@ -51,6 +51,28 @@ function sendVerificationEmail(email, idMembre)
 	});
 }
 
+
+function sendApprouvedAccountEmail(email)
+{
+	
+	var mailOptions = {
+		from: 'wecamp.app.contact@gmail.com',
+		to: email,
+		subject: 'Compte Vérifié',
+		html: "<p>Votre compte WeCamp a été vérifié: .</p>"
+	};
+	transporter.sendMail(mailOptions, function(error, info){
+	if (error) 
+	{
+		console.log(error);
+	} 
+	else 
+	{
+		console.log('Email sent: ' + info.response);
+	}
+	});
+}
+
 function sendForgotPasswordEmail(email, idMembre)
 {
 	let randomCode = randomize('0', 5);
@@ -59,6 +81,28 @@ function sendForgotPasswordEmail(email, idMembre)
 		to: email,
 		subject: 'Reset your password',
 		html: "<p>You can use this code to reset your password: " + randomCode + ".</p>"
+	};
+	transporter.sendMail(mailOptions, function(error, info){
+	if (error) 
+	{
+		console.log(error);
+	} 
+	else 
+	{
+		console.log('Email sent: ' + info.response);
+		con.query("INSERT INTO verificationcodes (idMembre, verifCode) VALUES(?, ?)", [idMembre, randomCode]);
+	}
+	});
+}
+
+function sendVerificationAccountEmail(email, idMembre)
+{
+	let randomCode = randomize('0', 5);
+	var mailOptions = {
+		from: 'wecamp.app.contact@gmail.com',
+		to: email,
+		subject: 'Vérifier Votre Compte WeCamp',
+		html: "<p>You can use this code to verify your account: " + randomCode + ".</p>"
 	};
 	transporter.sendMail(mailOptions, function(error, info){
 	if (error) 
@@ -128,11 +172,33 @@ app.post("/forgot_password", function(req, res)
         let numRows = result.length;
         if (numRows = 0)
         {
-            res.json("Invalid Email");
+            res.json({response : "Invalid Email"});
         }
         else
         {	
 			sendForgotPasswordEmail(email, result[0].idMembre);
+			console.log("check your email");
+			res.json({response : result[0].idMembre});
+        }
+    });
+});
+
+
+app.post("/verify_account", function(req, res)
+{
+    let email = req.query.email;
+    con.query("SELECT * FROM membre WHERE email = ? ", [email],
+    function (err, result)
+    {  
+        if (err) throw err;
+        let numRows = result.length;
+        if (numRows = 0)
+        {
+            res.json("Invalid Email");
+        }
+        else
+        {	
+			sendVerificationAccountEmail(email, result[0].idMembre);
 			console.log("check your email");
 			res.json(result[0].idMembre);
         }
@@ -161,11 +227,11 @@ app.post("/verify_reset_code", function(req, res)
 					let length = result.length;
 					if (length == 0)
 					{
-						res.json(false);
+						res.json({response : false});
 					}
 					else
 					{
-						res.json(true);
+						res.json({response : true});
 					}
 				});
 			}
@@ -205,9 +271,9 @@ app.post("/reset_password", function(req, res)
 				        else
 				        {
 							sendPasswordChangedEmail(email, idMembre);
-							con.query("DELETE FROM verificationcodes WHERE idMembre = ? AND verifCode = ?", [idMembre, verifCode]);
+							con.query("DELETE FROM verificationcodes WHERE idMembre = ? ", [idMembre]);
 							console.log("check your email");
-							res.json([idMembre]);
+							res.json({response : [idMembre]});
 				        }
 		    });
 				});
@@ -233,7 +299,7 @@ app.post("/register_user", function(req, res)
         let numRows = result.length;
         if (numRows != 0)
         {
-            res.json("Email is already associated with an account");
+            res.json({response : "Email is already associated with an account"});
         }
         else
         {
@@ -246,28 +312,30 @@ app.post("/register_user", function(req, res)
 						if (err2) throw err2;
 						let resultId = result2.insertId;
 						sendVerificationEmail(email, resultId);
-						res.json(resultId);
+						res.json({response : resultId});
+						console.log({response : resultId});
 					});
 				});
 			});
+			
         }
     });
 });
 
 app.get('/user', function(req, res)
 {
-    let id = req.query.idMembre;
-    con.query("SELECT * FROM membre WHERE idMembre = ? LIMIT 1", [id],
+    let email = req.query.email;
+    con.query("SELECT * FROM membre WHERE email = ? LIMIT 1", [email],
     function (err, result)
     {  
         if (err) throw err;
         if(result.length != 0)
         {
-            res.json(result[0]);
+            res.json({response : result[0]});
         }
         else
         {
-            res.json("No user found");
+            res.json({response : "No user found"});
         }
     })
 });
@@ -314,11 +382,11 @@ app.get("/confirm_unicity", function(req, res)
         let numRows = result.length;
         if (numRows != 0)
         {
-            res.json("Email or phone are already associated with an account");
+            res.json({response : true});
         }
         else
         {
-            res.json("OK");
+            res.json({response : false});
         }
     });
 });
@@ -326,6 +394,7 @@ app.get("/confirm_unicity", function(req, res)
 
 app.post("/verify_user", function(req, res)
 {
+	let email = req.body.email;
 	let user = req.body.idMembre;
 	let code = req.body.code;
 	verifyUser(user, code, function(result)
@@ -339,7 +408,8 @@ app.post("/verify_user", function(req, res)
 		{
 			con.query("DELETE FROM verificationcodes WHERE idMembre = ?", [user]);
 			con.query("UPDATE membre SET verified = 1 WHERE idMembre = ?", [user]);
-			res.json("User updated");
+			sendApprouvedAccountEmail(email)
+			res.json({response : "User updated"});
 		}
 	});
 });

@@ -117,7 +117,7 @@ exports.findByIdMembreAndIdLieu = (req, res) => {
           });
         } else {
           res.status(500).send({
-            message: "Error retrieving review with idLieu " + req.params.circuitId + "And idMembre" req.params.membreId
+            message: "Error retrieving review with idLieu " + req.params.lieuId + "And idMembre" + req.params.membreId
           });
         }
       } else res.send(data);
@@ -133,7 +133,7 @@ exports.findByIdMembreAndIdCircuit = (req, res) => {
           });
         } else {
           res.status(500).send({
-            message: "Error retrieving review with idCircuit " + req.params.circuitId + "And idMembre" req.params.membreId
+            message: "Error retrieving review with idCircuit " + req.params.circuitId + "And idMembre" + req.params.membreId
           });
         }
       } else res.send(data);
