@@ -352,7 +352,7 @@ app.get('/login', function(req, res)
 	        let numRows = result.length;
 	        if (numRows == 0)
 	        {
-	            res.json("Account not found");
+	            res.json({response : "Account not found"});
 	        }
 			else
 			{
@@ -360,11 +360,11 @@ app.get('/login', function(req, res)
 				{
 					if (cmpHash)
 					{
-						res.json(result[0]);
+						res.json({response : result[0]});
 					}
 					else
 					{
-						res.json("Wrong password");
+						res.json({response : "Wrong password"});
 					}
 				});
 			}
