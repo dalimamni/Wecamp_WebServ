@@ -52,7 +52,7 @@ Lieu.getAll = result => {
     }
 
     console.log("Lieux: ", res);
-    result(null, res);
+    result(null, {res});
   });
 };
 Lieu.updateById = (idLieu, lieu, result) => {
