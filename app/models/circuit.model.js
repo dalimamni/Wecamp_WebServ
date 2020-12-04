@@ -20,7 +20,7 @@ Circuit.create = (newCircuit, result) => {
     }
 
     console.log("created circuit: ", { id: res.insertIdCircuit, ...newCircuit });
-    result(null, { id: res.insertIdCircuit, ...newCircuit });
+    result(null, { idCircuit: res.insertId, ...newCircuit });
   });
 };
 
@@ -52,14 +52,14 @@ Circuit.getAll = result => {
     }
 
     console.log("Circuit: ", res);
-    result(null, res);
+    result(null, {res});
   });
 };
 
 Circuit.updateById = (idCircuit, circuit, result) => {
   sql.query(
-    "UPDATE circuit SET difficulte = ?, nomCircuit= ? WHERE idCircuit = ?",
-    [circuit.difficulte, circuit.nomCircuit, idCircuit],
+    "UPDATE circuit SET difficulte = ?, nomCircuit= ?, duree= ? WHERE idCircuit = ?",
+    [circuit.difficulte, circuit.nomCircuit, circuit.duree, idCircuit],
     (err, res) => {
       if (err) {
         console.log("error: ", err);
@@ -94,6 +94,22 @@ Circuit.remove = (idCircuit, result) => {
     }
 
     console.log("deleted circuit with id: ", idCircuit);
+    result(null, res);
+  });
+  sql.query("DELETE FROM circuitPoint WHERE idCircuit = ?", idCircuit, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(null, err);
+      return;
+    }
+
+    if (res.affectedRows == 0) {
+      
+      result({ kind: "not_found" }, null);
+      return;
+    }
+
+    console.log("deleted circuitPoints with id: ", idCircuit);
     result(null, res);
   });
 };

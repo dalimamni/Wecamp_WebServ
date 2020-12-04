@@ -5,6 +5,7 @@ const CircuitPoint = function(circuitPoint) {
   this.idCircuit = circuitPoint.idCircuit;
   this.longitude = circuitPoint.longitude;
   this.latitude = circuitPoint.latitude;
+  this.ordre = circuitPoint.ordre;
   };
 
 CircuitPoint.create = (newCircuitPoint, result) => {
@@ -35,6 +36,42 @@ CircuitPoint.findById = (circuitPointId, result) => {
     }
 
     
+    result({ kind: "not_found" }, null);
+  });
+};
+
+
+
+CircuitPoint.findAllCircuitPoints = (circuitId, result) => {
+  sql.query(`SELECT * FROM circuitPoint WHERE idCircuit = ${circuitId}`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+
+    if (res.length) {
+      console.log("found circuitPoints: ", res[0]);
+      result(null, res[0]);
+      return;
+    }
+    result({ kind: "not_found" }, null);
+  });
+};
+
+CircuitPoint.deleteAllCircuitPoints = (circuitId, result) => {
+  sql.query(`DELETE FROM circuitPoint WHERE idCircuit = ${circuitId}`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+
+    if (res.length) {
+      console.log("found circuitPoints: ", res[0]);
+      result(null, res[0]);
+      return;
+    }
     result({ kind: "not_found" }, null);
   });
 };

@@ -13,7 +13,8 @@ exports.create = (req, res) => {
     const circuitPoint = new CircuitPoint({
       idCircuit: req.body.idCircuit,
       longitude: req.body.longitude,
-      latitude: req.body.latitude
+      latitude: req.body.latitude,
+      ordre: req.body.ordre
     });
   
     // Save group in the database
@@ -35,6 +36,38 @@ exports.findAll = (req, res) => {
             err.message || "Some error occurred while retrieving circuitPoints."
         });
       else res.send(data);
+    });
+};
+
+exports.findAllCircuitPoints = (req, res) => {
+    CircuitPoint.findAllCircuitPoints(req.params.circuitId, (err, data) => {
+      if (err) {
+        if (err.kind === "not_found") {
+          res.status(404).send({
+            message: `Not found circuitPoint with id ${req.params.circuitId}.`
+          });
+        } else {
+          res.status(500).send({
+            message: "Error retrieving circuitPoints with circuitId " + req.params.circuitId
+          });
+        }
+      } else res.send(data);
+    });
+};
+
+exports.deleteAllCircuitPoints = (req, res) => {
+    CircuitPoint.deleteAllCircuitPoints(req.params.circuitId, (err, data) => {
+      if (err) {
+        if (err.kind === "not_found") {
+          res.status(404).send({
+            message: `Not found circuitPoint with id ${req.params.circuitId}.`
+          });
+        } else {
+          res.status(500).send({
+            message: "Error retrieving circuitPoints with circuitId " + req.params.circuitId
+          });
+        }
+      } else res.send(data);
     });
 };
 
