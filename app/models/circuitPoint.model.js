@@ -51,8 +51,8 @@ CircuitPoint.findAllCircuitPoints = (circuitId, result) => {
     }
 
     if (res.length) {
-      console.log("found circuitPoints: ", res[0]);
-      result(null, res[0]);
+      console.log("found circuitPoints: ", {res});
+      result(null, {res});
       return;
     }
     result({ kind: "not_found" }, null);

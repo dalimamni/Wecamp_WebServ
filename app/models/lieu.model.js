@@ -6,7 +6,7 @@ const Lieu = function(lieu) {
   this.nom = lieu.nom;
   this.description = lieu.description;
   this.longitude = lieu.longitude;
-  this.latidue = lieu.latidue;
+  this.latitude = lieu.latitude;
   this.images = lieu.images;
   this.etatValidation = lieu.etatValidation;
 };
@@ -57,8 +57,8 @@ Lieu.getAll = result => {
 };
 Lieu.updateById = (idLieu, lieu, result) => {
   sql.query(
-    "UPDATE lieux SET 	idMembre = ?, nom = ?, description = ?, longitude = ?, latidue = ?, images = ?, etatValidation = ? WHERE idLieu = ?",
-    [lieu.idMembre, lieu.nom, lieu.description, lieu.longitude, lieu.latidue, lieu.images, lieu.etatValidation, idLieu],
+    "UPDATE lieux SET 	idMembre = ?, nom = ?, description = ?, longitude = ?, latitude = ?, images = ?, etatValidation = ? WHERE idLieu = ?",
+    [lieu.idMembre, lieu.nom, lieu.description, lieu.longitude, lieu.latitude, lieu.images, lieu.etatValidation, idLieu],
     (err, res) => {
       if (err) {
         console.log("error: ", err);

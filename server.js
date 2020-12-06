@@ -424,6 +424,7 @@ const profile_storage = multer.diskStorage({
   })
  
 const upload_avatar = multer({storage: profile_storage})
+
 app.post('/upload_avatar', upload_avatar.array('photos', 12), (req, res) => {
     console.log(req.files)
     res.send('{"status":"ok"}')

@@ -15,7 +15,7 @@ exports.create = (req, res) => {
       nom: req.body.nom,
       description: req.body.description,
       longitude: req.body.longitude,
-      latidue: req.body.latidue,
+      latitude: req.body.latitude,
       images: req.body.images,
       etatValidation: req.body.etatValidation
 
