@@ -9,16 +9,30 @@ const Groupe = function(groupe) {
 };
 
 Groupe.create = (newGroupe, result) => {
+  var insertId;
+  var membreId;
   sql.query("INSERT INTO groupe SET ?", newGroupe, (err, res) => {
     if (err) {
       console.log("error: ", err);
       result(err, null);
       return;
     }
-
-    console.log("created groupe: ", { id: res.insertIdGroupe, ...newGroupe });
-    result(null, { id: res.insertIdGroupe, ...newGroupe });
+    console.log("created groupe: ", { id: res.insertId, ...newGroupe });
+    result(null, { id: res.insertId, ...newGroupe });
+    insertId = res.insertId;
+    membreId = newGroupe.idMembre;
+    sql.query("INSERT INTO membregroupe values (?, ?, ?)", [insertId, membreId, 1],
+      (err2, res2) => {
+        if (err2) {
+          console.log("error: ", err2);
+          result(err2, null);
+          return;
+        }
+    console.log("added membregroupe: ");
+    
   });
+  });
+ 
 };
 
 Groupe.findById = (groupeId, result) => {
@@ -89,7 +103,22 @@ Groupe.remove = (idGroupe, result) => {
       result({ kind: "not_found" }, null);
       return;
     }
+      sql.query("DELETE FROM membregroupe WHERE idGroupe = ?", idGroupe, (err2, res2) => {
+      if (err2) {
+        console.log("error: ", err2);
+        result(null, err2);
+        return;
+      }
 
+      if (res2.affectedRows == 0) {
+        // not found Customer with the id
+        result({ kind: "not_found" }, null);
+        return;
+      }
+
+      console.log("deleted membregroupe with id: ", idGroupe);
+      
+    });
     console.log("deleted groupe with id: ", idGroupe);
     result(null, res);
   });

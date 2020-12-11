@@ -6,10 +6,9 @@ const bcrypt = require('bcrypt');
 const multer = require('multer');
 const crypt = require('bcrypt-nodejs');
 const con = require("./app/models/db.js");
-const { query } = require("express");
-var fs = require('fs');
 const app = express();
-app.use('/complaints', express.static('complaints'));
+
+
 const saltRounds = 10;
 // parse requests of content-type: application/json
 app.use(bodyParser.json());
@@ -36,8 +35,8 @@ function sendVerificationEmail(email, idMembre)
 	var mailOptions = {
 		from: 'wecamp.app.contact@gmail.com',
 		to: email,
-		subject: 'Account Verification',
-		html: "<p>You can use this code to verify your account: " + randomCode + ".</p>"
+		subject: 'Verification du mail',
+		html: "<p>Utilisez ce code pour vérifier votre email : " + randomCode + ".</p>"
 	};
 	transporter.sendMail(mailOptions, function(error, info){
 	if (error) 
@@ -80,8 +79,8 @@ function sendForgotPasswordEmail(email, idMembre)
 	var mailOptions = {
 		from: 'wecamp.app.contact@gmail.com',
 		to: email,
-		subject: 'Reset your password',
-		html: "<p>You can use this code to reset your password: " + randomCode + ".</p>"
+		subject: 'Changement de mot de passe',
+		html: "<p>Utilisez ce code pour changer votre mot de passe: " + randomCode + ".</p>"
 	};
 	transporter.sendMail(mailOptions, function(error, info){
 	if (error) 
@@ -103,7 +102,7 @@ function sendVerificationAccountEmail(email, idMembre)
 		from: 'wecamp.app.contact@gmail.com',
 		to: email,
 		subject: 'Vérifier Votre Compte WeCamp',
-		html: "<p>You can use this code to verify your account: " + randomCode + ".</p>"
+		html: "<p>Utilisez ce code pour vérifier votre compte: " + randomCode + ".</p>"
 	};
 	transporter.sendMail(mailOptions, function(error, info){
 	if (error) 
@@ -341,6 +340,24 @@ app.get('/user', function(req, res)
     })
 });
  
+app.get('/detailsMembre/:idMembre', function(req, res)
+{
+    let idMembre = req.params.idMembre;
+    con.query("SELECT * FROM membre WHERE idMembre = ? LIMIT 1", [idMembre],
+    function (err, result)
+    {  
+        if (err) throw err;
+        if(result.length != 0)
+        {
+            res.json({response : result[0]});
+        }
+        else
+        {
+            res.json({response : "No user found"});
+        }
+    })
+});
+
 app.get('/login', function(req, res)
 {
     let email = req.query.email;
@@ -415,6 +432,31 @@ app.post("/verify_user", function(req, res)
 	});
 });
  
+const profile_storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, 'uploads/')
+    },
+    filename: function (req, file, cb) {
+      cb(null, file.originalname)
+    }
+  })
+ 
+const upload_avatar = multer({storage: profile_storage})
+
+app.post('/upload_avatar', upload_avatar.array('photos', 12), (req, res) => {
+    console.log(req.files)
+    res.send('{"status":"ok"}')
+});
+ 
+const complaint_upload = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, 'complaints/')
+    },
+    filename: function (req, file, cb) {
+      cb(null, file.originalname)
+    }
+  })
+
 const imagecontroller = require("./app/controllers/image.controller");
 const {
 	create,
@@ -461,13 +503,7 @@ const upload = multer({
 app.post("/add_image", upload.single('imgName'), (req, res, next) => {
 	console.log(req.file);
 	
-    //let nom = req.body.nom;
-    //let prix = req.body.prix;
-    //let sexe = req.body.sexe;
-    //let poid = req.body.poid;
-    //let status = req.body.status;
-    //let age = req.body.age;
-    //let qrcode = req.body.qrcode;
+
     let idMembre = req.body.idMembre;
 	let idLieu = req.body.idLieu;
 	let imgName = req.file.path;
@@ -496,14 +532,12 @@ app.post("/add_image", upload.single('imgName'), (req, res, next) => {
         });
       });
   }
-  
-  //
-  //createAnimal
 );
+
 app.get('/get_image', function(req, res)
 {
     console.log("GETTING COMPLAINTS");
-    //con.query("SELECT s.*, u.*, s.id AS comp_id FROM complaint s INNER JOIN user u ON s.user_id = u.id",
+    
     con.query("SELECT * FROM image",
     function (err, result)
     {  
@@ -511,8 +545,6 @@ app.get('/get_image', function(req, res)
         res.json(result);
     })
 });
-
-
 
 
 require("./app/routes/lieu.routes.js")(app);
