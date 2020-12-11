@@ -6,9 +6,10 @@ const bcrypt = require('bcrypt');
 const multer = require('multer');
 const crypt = require('bcrypt-nodejs');
 const con = require("./app/models/db.js");
+const { query } = require("express");
+var fs = require('fs');
 const app = express();
-
-
+app.use('/complaints', express.static('complaints'));
 const saltRounds = 10;
 // parse requests of content-type: application/json
 app.use(bodyParser.json());
@@ -414,30 +415,102 @@ app.post("/verify_user", function(req, res)
 	});
 });
  
-const profile_storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, 'uploads/')
-    },
-    filename: function (req, file, cb) {
-      cb(null, file.originalname)
-    }
-  })
- 
-const upload_avatar = multer({storage: profile_storage})
+const imagecontroller = require("./app/controllers/image.controller");
+const {
+	create,
+	findAll,
+	findOne,
+	update,
+	updateById,
+	deleteAll
+} = require("./app/controllers/image.controller");
+var resultId;
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './complaints');
+    var fileName;
 
-app.post('/upload_avatar', upload_avatar.array('photos', 12), (req, res) => {
-    console.log(req.files)
-    res.send('{"status":"ok"}')
+  },
+  filename: function (req, file, cb) {
+    fileName=file.originalname;
+    cb(null, file.originalname);
+  }
 });
- 
-const complaint_upload = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, 'complaints/')
-    },
-    filename: function (req, file, cb) {
-      cb(null, file.originalname)
-    }
-  })
+
+
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/jpg' || file.mimetype === 'image/png') {
+    cb(null, true);
+  } else {
+    cb(null, false)
+  }
+};
+
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 1024 * 1024 * 5
+  },
+  fileFilter: fileFilter
+});
+
+
+
+
+
+app.post("/add_image", upload.single('imgName'), (req, res, next) => {
+	console.log(req.file);
+	
+    //let nom = req.body.nom;
+    //let prix = req.body.prix;
+    //let sexe = req.body.sexe;
+    //let poid = req.body.poid;
+    //let status = req.body.status;
+    //let age = req.body.age;
+    //let qrcode = req.body.qrcode;
+    let idMembre = req.body.idMembre;
+	let idLieu = req.body.idLieu;
+	let imgName = req.file.path;
+    let validation = req.body.validation;
+    let nbValidation = req.body.nbValidation;
+  
+    
+     
+    //var baseName = fileName.replace(/\.[^.]+$/, '');
+    
+   // var idd= parseInt(baseName,10);
+   // console.log(baseName + "this is the number ");
+
+
+	con.query("INSERT INTO image (idMembre, idLieu, imgName, validation, nbValidation)  VALUES(?, ?, ?, ?, ?)", [idMembre, idLieu, imgName, validation, nbValidation],
+
+      function (err2, result2) {
+        if (err2) throw err2;
+        let last_id = result2.insertId;
+	
+
+		con.query("SELECT * FROM image WHERE idImage = ? LIMIT 1", [last_id],
+        function(err2, result2)
+        {
+            res.json(result2)
+        });
+      });
+  }
+  
+  //
+  //createAnimal
+);
+app.get('/get_image', function(req, res)
+{
+    console.log("GETTING COMPLAINTS");
+    //con.query("SELECT s.*, u.*, s.id AS comp_id FROM complaint s INNER JOIN user u ON s.user_id = u.id",
+    con.query("SELECT * FROM image",
+    function (err, result)
+    {  
+        if (err) throw err;
+        res.json(result);
+    })
+});
 
 
 

@@ -4,7 +4,7 @@ const sql = require("./db.js");
 const Image = function(image) {
   this.idLieu = image.idLieu;
   this.idMembre = image.idMembre;
-  this.img = image.img;
+  this.imgName = image.imgName;
   this.validation = image.validation;
   this.nbValidation = image.nbValidation;
  };
@@ -56,8 +56,8 @@ Image.getAll = result => {
 
 Image.updateById = (idImage, image, result) => {
   sql.query(
-    "UPDATE image SET img = ?, validation= ?, nbValidation = ? WHERE idImage = ?",
-    [image.img, image.validation, image.nbValidation, idImage],
+    "UPDATE image SET imgName = ?, validation= ?, nbValidation = ? WHERE idImage = ?",
+    [image.imgName, image.validation, image.nbValidation, idImage],
     (err, res) => {
       if (err) {
         console.log("error: ", err);

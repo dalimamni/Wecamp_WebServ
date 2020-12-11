@@ -13,7 +13,7 @@ exports.create = (req, res) => {
     const image = new Image({
       idLieu: req.body.idLieu,
       idMembre: req.body.idMembre,
-      img: req.body.img,
+      imgName: req.body.imgName,
       validation: req.body.validation,
       nbValidation: req.body.nbValidation
      });
