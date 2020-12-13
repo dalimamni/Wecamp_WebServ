@@ -9,14 +9,11 @@ const con = require("./app/models/db.js");
 const { query } = require("express");
 var fs = require('fs');
 const app = express();
-app.use('/complaints', express.static('complaints'));
+app.use("/complaints", express.static(__dirname + '/complaints'));
 const saltRounds = 10;
 // parse requests of content-type: application/json
-app.use(bodyParser.json());
-
-// parse requests of content-type: application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: true }));
-
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 // simple route
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to wecamp application." });
@@ -415,7 +412,7 @@ app.post("/verify_user", function(req, res)
 	});
 });
  
-const imagecontroller = require("./app/controllers/image.controller");
+const Lieucontroller = require("./app/controllers/groupe.controller");
 const {
 	create,
 	findAll,
@@ -423,7 +420,7 @@ const {
 	update,
 	updateById,
 	deleteAll
-} = require("./app/controllers/image.controller");
+} = require("./app/controllers/groupe.controller");
 var resultId;
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -458,43 +455,38 @@ const upload = multer({
 
 
 
-app.post("/add_image", upload.single('imgName'), (req, res, next) => {
+app.post("/add_image", upload.single('image'), (req, res, next) => {
 	console.log(req.file);
 	
-    //let nom = req.body.nom;
-    //let prix = req.body.prix;
-    //let sexe = req.body.sexe;
-    //let poid = req.body.poid;
-    //let status = req.body.status;
-    //let age = req.body.age;
-    //let qrcode = req.body.qrcode;
+
     let idMembre = req.body.idMembre;
-	let idLieu = req.body.idLieu;
-	let imgName = req.file.path;
-    let validation = req.body.validation;
-    let nbValidation = req.body.nbValidation;
-  
-    
-     
+	let nom = req.body.nom;
+	let slogan = req.body.slogan;
+	let image = req.file.path;
+	
+	
+	
+	
     //var baseName = fileName.replace(/\.[^.]+$/, '');
     
    // var idd= parseInt(baseName,10);
    // console.log(baseName + "this is the number ");
 
 
-	con.query("INSERT INTO image (idMembre, idLieu, imgName, validation, nbValidation)  VALUES(?, ?, ?, ?, ?)", [idMembre, idLieu, imgName, validation, nbValidation],
+	con.query("INSERT INTO groupe (idMembre, nom, slogan, image)  VALUES(?, ?, ?, ?)", [idMembre, nom, slogan, image],
 
-      function (err2, result2) {
-        if (err2) throw err2;
-        let last_id = result2.insertId;
-	
-
-		con.query("SELECT * FROM image WHERE idImage = ? LIMIT 1", [last_id],
+      function (err, result)    {
+		if (err) throw err;
+        let last_id = result.insertId;
+        fs.rename('complaints/file_avatar.jpg', 'complaints/'+last_id+'.jpg', function(err) {
+            if ( err ) console.log('ERROR: ' + err);
+        });
+        con.query("SELECT * FROM groupe WHERE idGroupe = ? LIMIT 1", [last_id],
         function(err2, result2)
         {
             res.json(result2)
         });
-      });
+    });
   }
   
   //
@@ -504,7 +496,7 @@ app.get('/get_image', function(req, res)
 {
     console.log("GETTING COMPLAINTS");
     //con.query("SELECT s.*, u.*, s.id AS comp_id FROM complaint s INNER JOIN user u ON s.user_id = u.id",
-    con.query("SELECT * FROM image",
+    con.query("SELECT * FROM lieux",
     function (err, result)
     {  
         if (err) throw err;
