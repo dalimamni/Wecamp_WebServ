@@ -29,7 +29,7 @@ Membre.create = (newMembre, result) => {
 };
 
 Membre.findById = (membreId, result) => {
-  sql.query(`SELECT * FROM membre WHERE idMembre = ${membreId}`, (err, res) => {
+  sql.query(`SELECT * FROM membre WHERE idMembre = ${membreId} LIMIT 1`, (err, res) => {
     if (err) {
       console.log("error: ", err);
       result(err, null);
@@ -37,13 +37,12 @@ Membre.findById = (membreId, result) => {
     }
 
     if (res.length) {
-      console.log("found Membre: ", res[0]);
-      result(null, res[0]);
+      console.log("found Membre: ", res);
+      result(null, {response: res[0]});
       return;
     }
 
-    // not found Customer with the id
-    result({ kind: "not_found" }, null);
+    result(null, { response: "not_found" });
   });
 };
 
