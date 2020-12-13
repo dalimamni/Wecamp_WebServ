@@ -19,7 +19,7 @@ Conseil.create = (newConseil, result) => {
     }
 
     console.log("created Review: ", { id: res.insertIdConseil, ...newConseil });
-    result(null, { id: res.insertIdConseil, ...newConseil });
+    result(null, { id: res.insertId, ...newConseil });
   });
 };
 
@@ -42,6 +42,43 @@ Conseil.findById = (conseilId, result) => {
   });
 };
 
+Conseil.findByIdLieu = (lieuId, result) => {
+  sql.query(`SELECT * FROM conseil WHERE idLieu = ${lieuId}`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+
+    if (res.length) {
+      console.log("found Conseil: ", res);
+      result(null, {res});
+      return;
+    }
+    
+    result(null,{ res: "not_found" });
+  });
+};
+
+Conseil.findByIdCircuit = (circuitId, result) => {
+  sql.query(`SELECT * FROM conseil WHERE idCircuit = ${circuitId}`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+
+    if (res.length) {
+      console.log("found Review: ", res);
+      result(null, {res});
+      return;
+    }
+    
+    result(null, { res: "not_found" });
+  });
+};
+
+
 Conseil.getAll = result => {
   sql.query("SELECT * FROM conseil", (err, res) => {
     if (err) {
@@ -54,6 +91,7 @@ Conseil.getAll = result => {
     result(null, res);
   });
 };
+
 Conseil.updateById = (idConseil, conseil, result) => {
   sql.query(
     "UPDATE conseil SET idLieu = ?, idMembre = ?, contenu = ?, nbLike = ? , nbDislike = ? WHERE idConseil = ?",
@@ -73,6 +111,52 @@ Conseil.updateById = (idConseil, conseil, result) => {
 
       console.log("updated membre: ", { idConseil: idConseil, ...conseil });
       result(null, { idConseil: idConseil, ...conseil });
+    }
+  );
+};
+
+Conseil.addLike = (idConseil, result) => {
+  sql.query(
+    "UPDATE conseil SET  nbLike = nbLike + 1 WHERE idConseil = ?",
+    [idConseil],
+    (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        result(null, err);
+        return;
+      }
+
+      if (res.affectedRows == 0) {
+       
+        result({ kind: "not_found" }, null);
+        return;
+      }
+
+      console.log("updated conseil: ");
+      result(null, {res : "updated conseil"});
+    }
+  );
+};
+
+Conseil.addDislike = (idConseil, result) => {
+  sql.query(
+    "UPDATE conseil SET  nbDislike = nbDislike + 1 WHERE idConseil = ?",
+    [idConseil],
+    (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        result(null, err);
+        return;
+      }
+
+      if (res.affectedRows == 0) {
+       
+        result({ kind: "not_found" }, null);
+        return;
+      }
+
+      console.log("updated conseil: ");
+      result(null, {res : "updated conseil"});
     }
   );
 };
