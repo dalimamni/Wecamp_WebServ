@@ -1,34 +1,5 @@
 const Conseil = require("../models/conseil.model.js");
 
-
-exports.create = (req, res) => {
-  
-};
-
-
-exports.findAll = (req, res) => {
-  
-};
-
-
-exports.findOne = (req, res) => {
-  
-};
-
-exports.update = (req, res) => {
-  
-};
-
-
-exports.delete = (req, res) => {
-  
-};
-
-
-exports.deleteAll = (req, res) => {
-  
-};
-
 exports.create = (req, res) => {
   
     if (!req.body) {
@@ -68,7 +39,8 @@ exports.create = (req, res) => {
       else res.send(data);
     });
   };
-  exports.findOne = (req, res) => {
+
+exports.findOne = (req, res) => {
     Conseil.findById(req.params.conseilId, (err, data) => {
       if (err) {
         if (err.kind === "not_found") {
@@ -83,7 +55,42 @@ exports.create = (req, res) => {
       } else res.send(data);
     });
   };
-  exports.update = (req, res) => {
+
+exports.findByIdLieu = (req, res) => {
+    Conseil.findByIdLieu(req.params.lieuId, (err, data) => {
+      if (err) {
+        if (err.kind === "not_found") {
+          res.status(404).send({
+            message: `Not found conseil with idLieu ${req.params.lieuId}.`
+          });
+        } else {
+          res.status(500).send({
+            message: "Error retrieving conseil with idLieu " + req.params.lieuId
+          });
+        }
+      } else res.send(data);
+    });
+  };
+
+  
+
+exports.findByIdCircuit = (req, res) => {
+    Conseil.findByIdCircuit(req.params.circuitId, (err, data) => {
+      if (err) {
+        if (err.kind === "not_found") {
+          res.status(404).send({
+            message: `Not found conseil with idLieu ${req.params.circuitId}.`
+          });
+        } else {
+          res.status(500).send({
+            message: "Error retrieving conseil with idLieu " + req.params.circuitId
+          });
+        }
+      } else res.send(data);
+    });
+  };
+
+exports.update = (req, res) => {
     // Validate Request
     if (!req.body) {
       res.status(400).send({
@@ -109,6 +116,40 @@ exports.create = (req, res) => {
       }
     );
   };
+
+exports.addLike = (req, res) => {
+    Conseil.addLike(req.params.conseilId, (err, data) => {
+      if (err) {
+        if (err.kind === "not_found") {
+          res.status(404).send({
+            message: `Not found conseil with idConseil ${req.params.conseilId}.`
+          });
+        } else {
+          res.status(500).send({
+            message: "Error retrieving conseil with idConseil " + req.params.conseilId
+          });
+        }
+      } else res.send(data);
+    });
+};
+
+exports.addDislike = (req, res) => {
+    Conseil.addDislike(req.params.conseilId, (err, data) => {
+      if (err) {
+        if (err.kind === "not_found") {
+          res.status(404).send({
+            message: `Not found conseil with idConseil ${req.params.conseilId}.`
+          });
+        } else {
+          res.status(500).send({
+            message: "Error retrieving conseil with idConseil " + req.params.conseilId
+          });
+        }
+      } else res.send(data);
+    });
+};
+
+
   exports.delete = (req, res) => {
     Conseil.remove(req.params.conseilId, (err, data) => {
       if (err) {

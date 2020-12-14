@@ -17,8 +17,17 @@ Review.create = (newReview, result) => {
       return;
     }
 
-    console.log("created Review: ", { id: res.insertIdReview, ...newReview });
+    console.log("created Review: ", { id: res.insertId, ...newReview });
     result(null, { id: res.insertIdReview, ...newReview });
+  });
+  sql.query("UPDATE membre SET score = score + 50 WHERE idMembre = ?", newReview.idMembre, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+
+    console.log("score updated: ");
   });
 };
 

@@ -20,6 +20,15 @@ Rating.create = (newRating, result) => {
     console.log("created rating: ", { id: res.insertIdRating, ...newRating});
     result(null, { id: res.insertIdRating, ...newRating });
   });
+  sql.query("UPDATE membre SET score = score + 20 WHERE idMembre = ?", newRating.idMembre, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+
+    console.log("score updated: ");
+  });
 };
 
 Rating.findById = (ratingId, result) => {
