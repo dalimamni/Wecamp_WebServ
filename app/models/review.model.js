@@ -50,8 +50,8 @@ Review.findByIdMembre = (membreId, result) => {
     }
 
     if (res.length) {
-      console.log("found Review: ", res[0]);
-      result(null, res[0]);
+      console.log("found Review: ", res);
+      result(null, {res});
       return;
     }
 

@@ -7,6 +7,8 @@ module.exports = app => {
     app.get("/membreGroupes/:membreId", membreGroupe.findMembreGroups);
   
     app.get("/membreDuGroupe/:groupeId", membreGroupe.getAllMembres);
+
+	app.get("/isAlreadyMember/:groupeId/:membreId", membreGroupe.isAlreadyMember);    
     
     app.delete("/membreGroupe/:membreId/:groupeId", membreGroupe.removeMembre);
 

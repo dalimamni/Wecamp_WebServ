@@ -34,12 +34,12 @@ Circuit.findById = (circuitId, result) => {
 
     if (res.length) {
       console.log("found circuit: ", res[0]);
-      result(null, res[0]);
+      result(null, {res : res[0]});
       return;
     }
 
     
-    result({ kind: "not_found" }, null);
+    result(null, { res: "not_found" });
   });
 };
 

@@ -59,6 +59,18 @@ exports.getAllMembres = (req, res) => {
     });
 };
 
+exports.isAlreadyMember = (req, res) => {
+    MembreGroupe.isAlreadyMember(req.params.groupeId, req.params.membreId, (err, data) => {
+      if (err) {
+        if (err.kind === "not_found") {
+          res.status(404).send({
+            message: `Not found membreGroupe in idGroupe ${req.params.groupeId}.`
+          });
+        } 
+      } else res.send(data);
+    });
+};
+
 exports.removeMembre = (req, res) => {
     MembreGroupe.removeMembre(req.params.membreId, req.params.groupeId, (err, data) => {
       if (err) {

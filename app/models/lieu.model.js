@@ -34,12 +34,12 @@ Lieu.findById = (lieuId, result) => {
 
     if (res.length) {
       console.log("found Lieux: ", res[0]);
-      result(null, res[0]);
+      result(null, {res : res[0] });
       return;
     }
 
     // not found Customer with the id
-    result({ kind: "not_found" }, null);
+    result(null, { res: "not_found" });
   });
 };
 

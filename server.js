@@ -4,12 +4,11 @@ const nodemailer = require('nodemailer');
 const randomize = require('randomatic');
 const bcrypt = require('bcrypt');
 const multer = require('multer');
+var fs = require('fs');
 const crypt = require('bcrypt-nodejs');
 const con = require("./app/models/db.js");
-const { query } = require("express");
-var fs = require('fs');
 const app = express();
-app.use("/complaints", express.static(__dirname + '/complaints'));
+app.use("complaints", express.static('complaints'));
 const saltRounds = 10;
 // parse requests of content-type: application/json
 app.use(bodyParser.json({limit: '50mb'}));
@@ -33,8 +32,8 @@ function sendVerificationEmail(email, idMembre)
 	var mailOptions = {
 		from: 'wecamp.app.contact@gmail.com',
 		to: email,
-		subject: 'Account Verification',
-		html: "<p>You can use this code to verify your account: " + randomCode + ".</p>"
+		subject: 'Verification du mail',
+		html: "<p>Utilisez ce code pour vérifier votre email : " + randomCode + ".</p>"
 	};
 	transporter.sendMail(mailOptions, function(error, info){
 	if (error) 
@@ -77,8 +76,8 @@ function sendForgotPasswordEmail(email, idMembre)
 	var mailOptions = {
 		from: 'wecamp.app.contact@gmail.com',
 		to: email,
-		subject: 'Reset your password',
-		html: "<p>You can use this code to reset your password: " + randomCode + ".</p>"
+		subject: 'Changement de mot de passe',
+		html: "<p>Utilisez ce code pour changer votre mot de passe: " + randomCode + ".</p>"
 	};
 	transporter.sendMail(mailOptions, function(error, info){
 	if (error) 
@@ -100,7 +99,7 @@ function sendVerificationAccountEmail(email, idMembre)
 		from: 'wecamp.app.contact@gmail.com',
 		to: email,
 		subject: 'Vérifier Votre Compte WeCamp',
-		html: "<p>You can use this code to verify your account: " + randomCode + ".</p>"
+		html: "<p>Utilisez ce code pour vérifier votre compte: " + randomCode + ".</p>"
 	};
 	transporter.sendMail(mailOptions, function(error, info){
 	if (error) 
@@ -338,6 +337,24 @@ app.get('/user', function(req, res)
     })
 });
  
+app.get('/detailsMembre/:idMembre', function(req, res)
+{
+    let idMembre = req.params.idMembre;
+    con.query("SELECT * FROM membre WHERE idMembre = ? LIMIT 1", [idMembre],
+    function (err, result)
+    {  
+        if (err) throw err;
+        if(result.length != 0)
+        {
+            res.json({response : result[0]});
+        }
+        else
+        {
+            res.json({response : "No user found"});
+        }
+    })
+});
+
 app.get('/login', function(req, res)
 {
     let email = req.query.email;
@@ -412,7 +429,12 @@ app.post("/verify_user", function(req, res)
 	});
 });
  
-const Lieucontroller = require("./app/controllers/groupe.controller");
+
+
+
+ 
+
+
 const {
 	create,
 	findAll,
@@ -421,48 +443,22 @@ const {
 	updateById,
 	deleteAll
 } = require("./app/controllers/groupe.controller");
-var resultId;
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, './complaints');
-    var fileName;
-
-  },
-  filename: function (req, file, cb) {
-    fileName=file.originalname;
-    cb(null, file.originalname);
-  }
-});
 
 
-const fileFilter = (req, file, cb) => {
-  if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/jpg' || file.mimetype === 'image/png') {
-    cb(null, true);
-  } else {
-    cb(null, false)
-  }
-};
-
-const upload = multer({
-  storage: storage,
-  limits: {
-    fileSize: 1024 * 1024 * 5
-  },
-  fileFilter: fileFilter
-});
-
-
-
-
-
-app.post("/add_image", upload.single('image'), (req, res, next) => {
+const complaint_upload = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, 'complaints')
+    },
+    filename: function (req, file, cb) {
+      cb(null, file.originalname)
+    }
+  })
+const add_complaint = multer({storage: complaint_upload})
+app.post('/add_image', add_complaint.single('image', 12), function(req, res){
 	console.log(req.file);
 	
 
-    let idMembre = req.body.idMembre;
-	let nom = req.body.nom;
-	let slogan = req.body.slogan;
-	let image = req.file.path;
+	//let image = req.body.path;
 	
 	
 	
@@ -473,38 +469,22 @@ app.post("/add_image", upload.single('image'), (req, res, next) => {
    // console.log(baseName + "this is the number ");
 
 
-	con.query("INSERT INTO groupe (idMembre, nom, slogan, image)  VALUES(?, ?, ?, ?)", [idMembre, nom, slogan, image],
-
-      function (err, result)    {
-		if (err) throw err;
-        let last_id = result.insertId;
-        fs.rename('complaints/file_avatar.jpg', 'complaints/'+last_id+'.jpg', function(err) {
-            if ( err ) console.log('ERROR: ' + err);
-        });
-        con.query("SELECT * FROM groupe WHERE idGroupe = ? LIMIT 1", [last_id],
-        function(err2, result2)
-        {
-            res.json(result2)
-        });
-    });
   }
-  
-  //
-  //createAnimal
 );
+
 app.get('/get_image', function(req, res)
 {
     console.log("GETTING COMPLAINTS");
+
     //con.query("SELECT s.*, u.*, s.id AS comp_id FROM complaint s INNER JOIN user u ON s.user_id = u.id",
-    con.query("SELECT * FROM lieux",
+    con.query("SELECT * FROM groupe",
+
     function (err, result)
     {  
         if (err) throw err;
         res.json(result);
     })
 });
-
-
 
 
 require("./app/routes/lieu.routes.js")(app);
